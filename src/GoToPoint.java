@@ -1,8 +1,4 @@
 public class GoToPoint {
-    private double xPos;
-    private double yPos;
-    private double radHeading;
-
     private double lastTimeRead;
     private double lastXError;
     private double lastYError;
@@ -14,34 +10,20 @@ public class GoToPoint {
     private PDCoeff translatePDController;
     private PDCoeff headingPDController;
 
-    public GoToPoint(double x, double y, double heading) {
-        xPos = x;
-        yPos = y;
-        radHeading = heading;
-
-        translatePDController = new PDCoeff(8, 0.03);
-        headingPDController = new PDCoeff(8, 0);
-    }
-
     public GoToPoint() {
-        xPos = 0;
-        yPos = 0;
-        radHeading = 0;
+        translatePDController = new PDCoeff(0, 0);
+        headingPDController = new PDCoeff(0, 0);
     }
 
-    public void reset() {
-        xPos = 0;
-        yPos = 0;
-        radHeading = Math.toRadians(0);
+    public void setHeadingCoeffs(double kP, double kD) {
+        headingPDController = new PDCoeff(kP, kD);
     }
 
-    public void reset(double x, double y, double heading) {
-        xPos = x;
-        yPos = y;
-        radHeading = heading;
+    public void setTranslateCoeffs(double kP, double kD) {
+        headingPDController = new PDCoeff(kP, kD);
     }
 
-    public void driveToCoordinate(double targetX, double targetY, double targetHeadingDegrees) {
+    public void driveToCoordinate(Pose2d target, Pose2d current) {
         double currentTime = (double) System.currentTimeMillis() / 1000;
 
         double xError;
@@ -49,9 +31,9 @@ public class GoToPoint {
         double headingError;
 
         do {
-            headingError = angleWrap(Math.toRadians(targetHeadingDegrees) - radHeading);
-            xError = targetX - xPos;
-            yError = targetY - yPos;
+            headingError = angleWrap(Math.toRadians(target.heading) - current.heading);
+            xError = target.x - current.x;
+            yError = target.y - current.y;
 
             double headingPD = (headingError * headingPDController.kP) + (((headingError - lastHeadingError) / (currentTime - lastTimeRead)) * headingPDController.kD);
             double xPD = (xError * translatePDController.kP) + (((xError - lastXError) / (currentTime - lastTimeRead)) * translatePDController.kD);
@@ -61,7 +43,7 @@ public class GoToPoint {
             xPD = clip(xPD, -1, 1);
             yPD = clip(yPD, -1, 1);
 
-            double[] rotatedVector = normalizeVectorInput(xPD, yPD, radHeading);
+            double[] rotatedVector = normalizeVectorInput(xPD, yPD, current.heading);
 
 
         } while(Math.abs(xError) > 1 || Math.abs(yError) > 1 || Math.abs(headingError) > Math.toRadians(1));
@@ -73,12 +55,6 @@ public class GoToPoint {
         while (angle < -Math.PI)
             angle += TAU;
         return angle;
-    }
-
-    public void update(double x, double y, double heading) {
-        xPos = x;
-        yPos = y;
-        radHeading = heading;
     }
 
     public double clip(double var, double min, double max) {
