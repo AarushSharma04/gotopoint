@@ -13,12 +13,10 @@ PID is a control system that is unbiased to the aspect it is controlling. Since 
 Using three values: `xSpeed`, `ySpeed`, and `headingSpeed`, one can use those in conjunction to move a holonomic mecanum drivetrain.
 
 ## How Do I Use It
-Look at the SampleUsage.java. Simply initialize the main class and pass in your global coordinates, and pass the targets and current positions as the parameters for a go to point function. You can also set (and tune) your PD coeffients by doing `goToPoint.setHeadingCoeffs(some kP double, some kD double);`. You can also reset your position using the `reset()` method.
+Look at the SampleUsage.java. Simply initialize the main class and pass in your global coordinates, and pass the targets and current positions as the parameters for a go to point function. You can also set (and tune) your PD coeffients by doing `goToPoint.setHeadingCoeffs(some kP double, some kD double);`.
 
 Lastly, to drive to a coordinate, simply pass in the targetPose, and the currentPose by doing: `goToPoint.driveToCoordinate(currentPose, targetPose);`. A pose is essentially a position with 3 main axes: x, y, and heading.
 
-## Demo
-
-Coming soon
+For example: `goToPoint.driveToCoordinate(new Pose2d(20, 0, 180), new Pose2d(xPosition, yPosition, heading));`, where `xPosition`, `yPosition`, and `heading` are all sensor inputs of your robot's global coordinates.
 
 
