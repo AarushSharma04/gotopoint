@@ -1,6 +1,8 @@
 # Go To Point Holonomic
 This project uses 3 PD (Proportional, Derivative) Control Systems to manipulate a robot into moving to a target point on a coordinate plane while combining movements effectively. This is valid for holonomic robots, specifically those with mecanum-based wheels.
 
+https://github.com/AarushSharma04/gotopoint
+
 ## How It Works
 To use this project, you need 3 main sensors, one to track a robot's X position, one to track a Y Position, and one for the heading. The more accurate these measurements are, and the less it drifts, the better the results would be. Using V-SLAM, camera localization, or other forms of knowing your robot's global coordinate will help you reach your target effectively. As of now, the powers for the Mecanum Wheels are between -1 and 1, where -1 is full reverse and 1 is full forward. This is done since we treat movements like a unit-circle (allows to use magnitude and calculate angles easily).
 
